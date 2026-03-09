@@ -1,12 +1,140 @@
-//
-// Copyright (C) 2026 The LineageOS Project
-//
-// SPDX-License-Identifier: Apache-2.0
-//
-
+// Minimal Android.bp para sa fingerprint at fpsgo
 soong_namespace {
     imports: [
-        "device/tecno/KM7k",
         "hardware/mediatek",
+        "hardware/millennium",
     ],
+}
+
+// ===== Fingerprint HAL Service =====
+cc_prebuilt_binary {
+    name: "android.hardware.biometrics.fingerprint@2.1-service-mediatek",
+    owner: "tecno",
+    target: {
+        android_arm64: {
+            srcs: ["proprietary/vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-service-mediatek"],
+            shared_libs: [
+                "libcutils", "liblog", "libhidlbase", "libhardware",
+                "libutils", "libbinder", "libc++", "libc", "libm", "libdl",
+                "android.hardware.biometrics.fingerprint@2.1",
+                "vendor.mediatek.hardware.biometrics.fingerprint@2.1",
+                "vendor.mediatek.hardware.mtkpower@1.0",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    relative_install_path: "hw",
+    strip: { none: true, },
+    prefer: true,
+    soc_specific: true,
+}
+
+// ===== Fingerprint HAL Libraries =====
+cc_prebuilt_library_shared {
+    name: "vendor.goodix.hardware.biometrics.fingerprint@2.1",
+    owner: "tecno",
+    target: {
+        android_arm64: {
+            srcs: ["proprietary/vendor/lib64/vendor.goodix.hardware.biometrics.fingerprint@2.1.so"],
+            shared_libs: ["libhidlbase", "libhidltransport", "libhwbinder",
+                "liblog", "libutils", "libcutils", "libc++", "libc", "libm", "libdl"],
+        },
+    },
+    compile_multilib: "64",
+    strip: { none: true, },
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "gf_fingerprint.default",
+    owner: "tecno",
+    target: {
+        android_arm64: {
+            srcs: ["proprietary/vendor/lib64/hw/gf_fingerprint.default.so"],
+            shared_libs: ["liblog", "libutils", "libcutils", "libbinder",
+                "libhardware", "libc", "libc++", "libm", "libdl",
+                "vendor.goodix.hardware.biometrics.fingerprint@2.1"],
+        },
+    },
+    compile_multilib: "64",
+    relative_install_path: "hw",
+    strip: { none: true, },
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "jiiov.fingerprint.default",
+    owner: "tecno",
+    target: {
+        android_arm64: {
+            srcs: ["proprietary/vendor/lib64/hw/jiiov.fingerprint.default.so"],
+            shared_libs: ["liblog", "libutils", "libcutils", "libbinder",
+                "libhardware", "libc", "libc++", "libm", "libdl"],
+        },
+    },
+    compile_multilib: "64",
+    relative_install_path: "hw",
+    strip: { none: true, },
+    prefer: true,
+    soc_specific: true,
+}
+
+// ===== XML Manifests =====
+prebuilt_etc_xml {
+    name: "android.hardware.biometrics.fingerprint@2.1-service-mediatek.xml",
+    owner: "tecno",
+    src: "proprietary/vendor/etc/vintf/manifest/android.hardware.biometrics.fingerprint@2.1-service-mediatek.xml",
+    sub_dir: "vintf/manifest",
+    soc_specific: true,
+}
+
+prebuilt_etc_xml {
+    name: "com.anc.fingerprint.extension@1.0-service.xml",
+    owner: "tecno",
+    src: "proprietary/vendor/etc/vintf/manifest/com.anc.fingerprint.extension@1.0-service.xml",
+    sub_dir: "vintf/manifest",
+    soc_specific: true,
+}
+
+prebuilt_etc_xml {
+    name: "manifest_fingerprint.xml",
+    owner: "tecno",
+    src: "proprietary/vendor/etc/vintf/manifest/manifest_fingerprint.xml",
+    sub_dir: "vintf/manifest",
+    soc_specific: true,
+}
+
+// ===== Permission =====
+prebuilt_etc {
+    name: "android.hardware.fingerprint.xml",
+    owner: "tecno",
+    src: "proprietary/vendor/etc/permissions/android.hardware.fingerprint.xml",
+    sub_dir: "permissions",
+    soc_specific: true,
+}
+
+// ===== fpsgo =====
+cc_prebuilt_binary {
+    name: "fpsgo",
+    owner: "tecno",
+    target: {
+        android_arm64: {
+            srcs: ["proprietary/vendor/bin/fpsgo"],
+            shared_libs: ["libc", "libm", "libdl", "liblog"],
+        },
+    },
+    compile_multilib: "64",
+    strip: { none: true, },
+    prefer: true,
+    soc_specific: true,
+}
+
+prebuilt_etc {
+    name: "fpsgo.rc",
+    owner: "tecno",
+    src: "proprietary/vendor/etc/init/fpsgo.rc",
+    sub_dir: "init",
+    soc_specific: true,
 }
